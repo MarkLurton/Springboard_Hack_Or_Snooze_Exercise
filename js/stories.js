@@ -84,6 +84,7 @@ $submitForm.on("click", async function (event) {
 
   if (event.target.className === "cancel") {
     $submitForm.hide();
+    $(".submit-inputs").val("");
     return;
   } else if (event.target.className === "submit") {
     let newStory = {
@@ -99,7 +100,6 @@ $submitForm.on("click", async function (event) {
 
       $(".submit-inputs").val("");
       hidePageComponents();
-
       putStoriesOnPage();
     }
   }
