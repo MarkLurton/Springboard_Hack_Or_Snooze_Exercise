@@ -34,6 +34,19 @@ a:hover {
   text-decoration: underline;
 }
 
+#own-stories > li > span {
+  margin-left: 5px !important;
+  margin-right: 5px !important;
+}
+
+#own-stories > li > .story-user {
+  margin-left: 76px !important;
+}
+
+.story-user {
+  margin-left: 22px;
+}
+
 /* Site layout */
 
 /* This is the basic box that the main part of the page goes into */
