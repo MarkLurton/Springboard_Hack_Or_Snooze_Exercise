@@ -38,7 +38,7 @@ function createUserInfoPage() {
     <h3>User Profile Info</h3>
     <h5>Name: ${currentUser.name}</h5>
     <h5>Username: ${currentUser.username}</h5>
-    <h5>Account Created: ${currentUser.createdAt}</h5>
+    <h5>Account Created: ${currentUser.createdAt.split("T")[0]}</h5>
   `);
 }
 
