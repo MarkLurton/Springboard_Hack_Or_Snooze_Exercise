@@ -6,8 +6,8 @@
 
 /** Show main list of all stories when click site name */
 
-function navAllStories(evt) {
-  console.debug("navAllStories", evt);
+function navAllStories() {
+  console.debug("navAllStories");
   hidePageComponents();
   putStoriesOnPage();
 }
@@ -36,26 +36,27 @@ function updateNavOnLogin() {
   $navUserProfile.text(`${currentUser.username}`).show();
 }
 
-function submitClick(evt) {
-  console.debug("submitClick");
+$navSubmit.on("click", function () {
+  console.debug("navSubmit");
   hidePageComponents();
   $submitForm.show();
   putStoriesOnPage();
-}
-
-$navSubmit.on("click", submitClick);
+});
 
 $navFavorites.on("click", function () {
+  console.debug("navFavorites");
   hidePageComponents();
   putFavoritesOnPage();
 });
 
 $navMyStories.on("click", function () {
+  console.debug("navMyStories");
   hidePageComponents();
   putOwnStoriesOnPage();
 });
 
 $navUserProfile.on("click", function () {
+  console.debug("navUserProfile");
   hidePageComponents();
   $accountInfoContainer.show();
 });

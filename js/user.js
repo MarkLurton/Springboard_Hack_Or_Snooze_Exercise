@@ -47,7 +47,7 @@ $loginForm.on("submit", login);
 /** Handle signup form submission. */
 
 async function signup(evt) {
-  console.debug("signup", evt);
+  console.debug("signup");
   evt.preventDefault();
 
   const name = $("#signup-name").val();
@@ -58,10 +58,12 @@ async function signup(evt) {
   // which we'll make the globally-available, logged-in user.
   currentUser = await User.signup(username, password, name);
 
-  saveUserCredentialsInLocalStorage();
-  updateUIOnUserLogin();
+  if (currentUser) {
+    saveUserCredentialsInLocalStorage();
+    updateUIOnUserLogin();
 
-  $signupForm.trigger("reset");
+    $signupForm.trigger("reset");
+  }
 }
 
 $signupForm.on("submit", signup);

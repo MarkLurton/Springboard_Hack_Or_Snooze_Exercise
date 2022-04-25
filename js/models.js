@@ -76,59 +76,82 @@ class StoryList {
       token: user.loginToken,
       story: newStory,
     };
-    const res = await axios.post(`${BASE_URL}/stories`, addStoryBody);
-    const story = new Story(res.data.story);
+    try {
+      const res = await axios.post(`${BASE_URL}/stories`, addStoryBody);
+      const story = new Story(res.data.story);
 
-    this.stories.unshift(story);
-    StoryList.getStories();
-    return story;
+      this.stories.unshift(story);
+      StoryList.getStories();
+      return story;
+    } catch (error) {
+      let message = "";
+      if (error.response.status === 400) {
+        message =
+          "Check your inputs. Be sure to include http:// or https:// on url.";
+      }
+      alert(
+        `Error: ${error.response.status} ${error.response.statusText}. ${message}`
+      );
+      return null;
+    }
   }
 
   async editStory(user, editStory) {
     console.debug("editStory");
+    try {
+      const editStoryBodyT = {
+        token: user.loginToken,
+        story: {
+          title: editStory.title,
+        },
+      };
 
-    const editStoryBodyT = {
-      token: user.loginToken,
-      story: {
-        title: editStory.title,
-      },
-    };
+      const editStoryBodyA = {
+        token: user.loginToken,
+        story: {
+          author: editStory.author,
+        },
+      };
 
-    const editStoryBodyA = {
-      token: user.loginToken,
-      story: {
-        author: editStory.author,
-      },
-    };
+      const editStoryBodyU = {
+        token: user.loginToken,
+        story: {
+          url: editStory.url,
+        },
+      };
 
-    const editStoryBodyU = {
-      token: user.loginToken,
-      story: {
-        url: editStory.url,
-      },
-    };
+      await axios.patch(
+        `${BASE_URL}/stories/${editStory.storyId}`,
+        editStoryBodyA
+      );
+      await axios.patch(
+        `${BASE_URL}/stories/${editStory.storyId}`,
+        editStoryBodyU
+      );
+      const res = await axios.patch(
+        `${BASE_URL}/stories/${editStory.storyId}`,
+        editStoryBodyT
+      );
 
-    const res1 = await axios.patch(
-      `${BASE_URL}/stories/${editStory.storyId}`,
-      editStoryBodyA
-    );
-    const res2 = await axios.patch(
-      `${BASE_URL}/stories/${editStory.storyId}`,
-      editStoryBodyU
-    );
-    const res3 = await axios.patch(
-      `${BASE_URL}/stories/${editStory.storyId}`,
-      editStoryBodyT
-    );
+      const story = new Story(res.data.story);
 
-    const story = new Story(res3.data.story);
-
-    this.stories = this.stories.filter(
-      (str) => str.storyId !== editStory.storyId
-    );
-    this.stories.unshift(story);
-    StoryList.getStories();
-    return story;
+      this.stories = this.stories.filter(
+        (str) => str.storyId !== editStory.storyId
+      );
+      this.stories.unshift(story);
+      StoryList.getStories();
+      return story;
+    } catch (error) {
+      let message = "";
+      if (error.response.status === 400) {
+        message =
+          "Check your inputs. Be sure to include http:// or https:// on url.";
+      }
+      alert(
+        `Error: ${error.response.status} ${error.response.statusText}. ${message}`
+      );
+      return null;
+    }
   }
 }
 
@@ -166,24 +189,35 @@ class User {
    */
 
   static async signup(username, password, name) {
-    const response = await axios({
-      url: `${BASE_URL}/signup`,
-      method: "POST",
-      data: { user: { username, password, name } },
-    });
+    try {
+      const response = await axios({
+        url: `${BASE_URL}/signup`,
+        method: "POST",
+        data: { user: { username, password, name } },
+      });
 
-    let { user } = response.data;
+      let { user } = response.data;
 
-    return new User(
-      {
-        username: user.username,
-        name: user.name,
-        createdAt: user.createdAt,
-        favorites: user.favorites,
-        ownStories: user.stories,
-      },
-      response.data.token
-    );
+      return new User(
+        {
+          username: user.username,
+          name: user.name,
+          createdAt: user.createdAt,
+          favorites: user.favorites,
+          ownStories: user.stories,
+        },
+        response.data.token
+      );
+    } catch (error) {
+      let message = "";
+      if (error.response.status === 409) {
+        message = "Username already taken. Please select another.";
+      }
+      alert(
+        `Error: ${error.response.status} ${error.response.statusText}. ${message}`
+      );
+      return null;
+    }
   }
 
   /** Login in user with API, make User instance & return it.

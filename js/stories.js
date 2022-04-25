@@ -92,13 +92,16 @@ $submitForm.on("click", async function (event) {
       url: $("#submit-url").val(),
     };
 
-    newStory = new Story(await storyList.addStory(currentUser, newStory));
-    currentUser.ownStories.push(newStory);
+    const story = await storyList.addStory(currentUser, newStory);
+    if (story) {
+      newStory = new Story(story);
+      currentUser.ownStories.push(newStory);
 
-    $(".submit-inputs").val("");
-    hidePageComponents();
+      $(".submit-inputs").val("");
+      hidePageComponents();
 
-    putStoriesOnPage();
+      putStoriesOnPage();
+    }
   }
 });
 
@@ -153,20 +156,23 @@ $editForm.on("submit", async function (event) {
   currentUser.ownStories = currentUser.ownStories.filter(
     (str) => str.storyId !== editStory.storyId
   );
-  editStory = new Story(await storyList.editStory(currentUser, editStory));
-  currentUser.ownStories.push(editStory);
+  const story = await storyList.editStory(currentUser, editStory);
+  if (story) {
+    editStory = new Story(story);
+    currentUser.ownStories.push(editStory);
 
-  const currFavLength = currentUser.favorites.length;
-  currentUser.favorites = currentUser.favorites.filter(
-    (str) => str.storyId !== editStory.storyId
-  );
-  if (currentUser.favorites.length !== currFavLength) {
-    currentUser.favorites.unshift(editStory);
+    const currFavLength = currentUser.favorites.length;
+    currentUser.favorites = currentUser.favorites.filter(
+      (str) => str.storyId !== editStory.storyId
+    );
+    if (currentUser.favorites.length !== currFavLength) {
+      currentUser.favorites.unshift(editStory);
+    }
+    $(".edit-inputs").val("");
+    hidePageComponents();
+
+    putOwnStoriesOnPage();
   }
-  $(".edit-inputs").val("");
-  hidePageComponents();
-
-  putOwnStoriesOnPage();
 });
 
 function putFavoritesOnPage() {
