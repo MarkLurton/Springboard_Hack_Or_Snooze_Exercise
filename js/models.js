@@ -22,9 +22,8 @@ class Story {
 
   /** Parses hostname out of URL and returns it. */
 
-  getHostName() {
-    // UNIMPLEMENTED: complete this function!
-    return "hostname.com";
+  getHostName(url) {
+    return url.split("/")[2];
   }
 }
 
@@ -86,36 +85,47 @@ class StoryList {
   }
 
   async editStory(user, editStory) {
-    console.debug('editStory');
+    console.debug("editStory");
 
     const editStoryBodyT = {
-      "token" : user.loginToken,
-      "story" : {
-        "title" : editStory.title
-      }
-    }
+      token: user.loginToken,
+      story: {
+        title: editStory.title,
+      },
+    };
 
     const editStoryBodyA = {
-      "token" : user.loginToken,
-      "story" : {
-        "author" : editStory.author
-      }
-    }
+      token: user.loginToken,
+      story: {
+        author: editStory.author,
+      },
+    };
 
     const editStoryBodyU = {
-      "token" : user.loginToken,
-      "story" : {
-        "url" : editStory.url
-      }
-    }
+      token: user.loginToken,
+      story: {
+        url: editStory.url,
+      },
+    };
 
-    const res1 = await axios.patch(`${BASE_URL}/stories/${editStory.storyId}`, editStoryBodyA);
-    const res2 = await axios.patch(`${BASE_URL}/stories/${editStory.storyId}`, editStoryBodyU);
-    const res3 = await axios.patch(`${BASE_URL}/stories/${editStory.storyId}`, editStoryBodyT);
+    const res1 = await axios.patch(
+      `${BASE_URL}/stories/${editStory.storyId}`,
+      editStoryBodyA
+    );
+    const res2 = await axios.patch(
+      `${BASE_URL}/stories/${editStory.storyId}`,
+      editStoryBodyU
+    );
+    const res3 = await axios.patch(
+      `${BASE_URL}/stories/${editStory.storyId}`,
+      editStoryBodyT
+    );
 
     const story = new Story(res3.data.story);
 
-    this.stories = this.stories.filter(str => str.storyId !== editStory.storyId);
+    this.stories = this.stories.filter(
+      (str) => str.storyId !== editStory.storyId
+    );
     this.stories.unshift(story);
     StoryList.getStories();
     return story;
@@ -234,39 +244,49 @@ class User {
   }
 
   async deleteStory(event) {
-    console.debug('deleteStory')
-    console.debug(event.target)
+    console.debug("deleteStory");
     let $target = $(event.target);
-    const $closestLi = $target.closest('li');
-    const storyId = $closestLi.attr('id');
-    const story = storyList.stories.find(str => str.storyId === storyId);
+    const $closestLi = $target.closest("li");
+    const storyId = $closestLi.attr("id");
 
-    if ($target.hasClass('trash-can')) {
-      $target = $target.children()
-    } 
+    if ($target.hasClass("trash-can")) {
+      $target = $target.children();
+    }
 
-    await axios.delete(`https://hack-or-snooze-v3.herokuapp.com/stories/${storyId}`, { data: {
-      token: this.loginToken
-    }});
+    await axios.delete(
+      `https://hack-or-snooze-v3.herokuapp.com/stories/${storyId}`,
+      {
+        data: {
+          token: this.loginToken,
+        },
+      }
+    );
 
-    this.favorites = this.favorites.filter(favStory => favStory.storyId !== storyId);
+    this.favorites = this.favorites.filter(
+      (favStory) => favStory.storyId !== storyId
+    );
 
-    this.ownStories = this.ownStories.filter(story => story.storyId !== storyId);
-    console.log(storyList);
-    storyList.stories = storyList.stories.filter(str => str.storyId !== storyId)
+    this.ownStories = this.ownStories.filter(
+      (story) => story.storyId !== storyId
+    );
+    storyList.stories = storyList.stories.filter(
+      (str) => str.storyId !== storyId
+    );
     putOwnStoriesOnPage();
   }
 
   addStoryToFavorites(story) {
-    this.favorites.push(story)
+    this.favorites.push(story);
     axios.post(
-    `https://hack-or-snooze-v3.herokuapp.com/users/${this.username}/favorites/${story.storyId}`,
-    { token: this.loginToken }
-  );
+      `https://hack-or-snooze-v3.herokuapp.com/users/${this.username}/favorites/${story.storyId}`,
+      { token: this.loginToken }
+    );
   }
 
   removeStoryFromFavorites(story) {
-    this.favorites = this.favorites.filter(favStory => favStory.storyId !== story.storyId);
+    this.favorites = this.favorites.filter(
+      (favStory) => favStory.storyId !== story.storyId
+    );
     axios.delete(
       `https://hack-or-snooze-v3.herokuapp.com/users/${this.username}/favorites/${story.storyId}`,
       { data: { token: this.loginToken } }
@@ -274,6 +294,8 @@ class User {
   }
 
   favoriteCheck(story) {
-    return this.favorites.some(favStory => (favStory.storyId === story.storyId));
+    return this.favorites.some(
+      (favStory) => favStory.storyId === story.storyId
+    );
   }
 }

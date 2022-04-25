@@ -76,7 +76,10 @@
             placeholder="story url"
           />
         </div>
-        <button type="submit">submit story</button>
+        <div>
+          <button class="submit" type="submit">submit story</button>
+          <button id="submit-cancel" class="cancel">cancel submit</button>
+        </div>
         <hr />
       </form>
 
@@ -101,13 +104,12 @@
         </div>
         <div class="edit-input">
           <label for="edit-url">url</label>
-          <input
-            class="edit-inputs"
-            id="edit-url"
-            placeholder="story url"
-          />
+          <input class="edit-inputs" id="edit-url" placeholder="story url" />
         </div>
-        <button type="submit">edit story</button>
+        <div>
+          <button type="submit">edit story</button>
+          <button class="cancel">cancel edit</button>
+        </div>
         <hr />
       </form>
       <!-- loading message (removed by JS after stories loaded) -->
@@ -176,6 +178,7 @@
         <button type="submit">create account</button>
       </form>
     </section>
+    <section class="account-info-container container hidden"></section>
     <!-- Library JS & our JS -->
     <script src="https://unpkg.com/jquery"></script>
     <script src="https://unpkg.com/axios/dist/axios.js"></script>

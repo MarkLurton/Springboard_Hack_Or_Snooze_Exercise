@@ -22,7 +22,7 @@ async function getAndShowStoriesOnStart() {
 function generateStoryMarkup(story, showTrashCan = false, showPencil = false) {
   // console.debug("generateStoryMarkup", story);
 
-  const hostName = story.getHostName();
+  const hostName = story.getHostName(story.url);
   const showFav = Boolean(currentUser);
 
   return $(`
@@ -79,26 +79,33 @@ function putStoriesOnPage() {
   $allStoriesList.show();
 }
 
-$submitForm.on("submit", async function (event) {
+$submitForm.on("click", async function (event) {
   event.preventDefault();
 
-  let newStory = {
-    title: $("#submit-title").val(),
-    author: $("#submit-author").val(),
-    url: $("#submit-url").val(),
-  };
+  if (event.target.className === "cancel") {
+    $submitForm.hide();
+    return;
+  } else if (event.target.className === "submit") {
+    let newStory = {
+      title: $("#submit-title").val(),
+      author: $("#submit-author").val(),
+      url: $("#submit-url").val(),
+    };
 
-  newStory = new Story(await storyList.addStory(currentUser, newStory));
-  currentUser.ownStories.push(newStory);
+    newStory = new Story(await storyList.addStory(currentUser, newStory));
+    currentUser.ownStories.push(newStory);
 
-  $(".submit-inputs").val("");
-  hidePageComponents();
+    $(".submit-inputs").val("");
+    hidePageComponents();
 
-  putStoriesOnPage();
+    putStoriesOnPage();
+  }
 });
 
+$;
+
 function putOwnStoriesOnPage() {
-  console.debug('putOwnStoriesOnPage');
+  console.debug("putOwnStoriesOnPage");
 
   $ownStories.empty();
 
@@ -114,38 +121,45 @@ function putOwnStoriesOnPage() {
   $ownStories.show();
 }
 
-$ownStories.on('click', '.trash-can', function() {
+$ownStories.on("click", ".trash-can", function (event) {
   currentUser.deleteStory(event);
 });
 
-$ownStories.on('click', '.pencil', function(event) {
+$ownStories.on("click", ".pencil", function (event) {
   let $target = $(event.target);
-  const $closestLi = $target.closest('li');
-  const storyId = $closestLi.attr('id');
-  let story = storyList.stories.find(str => str.storyId === storyId);
+  const $closestLi = $target.closest("li");
+  const storyId = $closestLi.attr("id");
+  let story = storyList.stories.find((str) => str.storyId === storyId);
 
-  $('#edit-title').val(`${story.title}`);
-  $('#edit-author').val(`${story.author}`);
-  $('#edit-url').val(`${story.url}`);
+  $("#edit-title").val(`${story.title}`);
+  $("#edit-author").val(`${story.author}`);
+  $("#edit-url").val(`${story.url}`);
   $editForm.show();
   storyList.editStoryId = storyId;
-})
+});
 
-$editForm.on('submit', async function(event) {
+$editForm.on("submit", async function (event) {
   event.preventDefault();
-  
+  if (event.target.className === "cancel") {
+    $editForm.hide();
+    return;
+  }
   let editStory = {
     title: $("#edit-title").val(),
     author: $("#edit-author").val(),
     url: $("#edit-url").val(),
-    storyId: storyList.editStoryId
+    storyId: storyList.editStoryId,
   };
-  currentUser.ownStories = currentUser.ownStories.filter(str => str.storyId !== editStory.storyId);
+  currentUser.ownStories = currentUser.ownStories.filter(
+    (str) => str.storyId !== editStory.storyId
+  );
   editStory = new Story(await storyList.editStory(currentUser, editStory));
   currentUser.ownStories.push(editStory);
 
   const currFavLength = currentUser.favorites.length;
-  currentUser.favorites = currentUser.favorites.filter(str => str.storyId !== editStory.storyId);
+  currentUser.favorites = currentUser.favorites.filter(
+    (str) => str.storyId !== editStory.storyId
+  );
   if (currentUser.favorites.length !== currFavLength) {
     currentUser.favorites.unshift(editStory);
   }
@@ -153,10 +167,10 @@ $editForm.on('submit', async function(event) {
   hidePageComponents();
 
   putOwnStoriesOnPage();
-})
+});
 
 function putFavoritesOnPage() {
-  console.debug('putFavoritesOnPage');
+  console.debug("putFavoritesOnPage");
 
   $favorites.empty();
 
@@ -173,24 +187,23 @@ function putFavoritesOnPage() {
 }
 
 async function toggleFavorite(event) {
-  console.debug('toggleFavorite')
-  console.debug(event.target)
+  console.debug("toggleFavorite");
   let $target = $(event.target);
-  const $closestLi = $target.closest('li');
-  const storyId = $closestLi.attr('id');
-  const story = storyList.stories.find(str => str.storyId === storyId);
+  const $closestLi = $target.closest("li");
+  const storyId = $closestLi.attr("id");
+  const story = storyList.stories.find((str) => str.storyId === storyId);
 
-  if ($target.hasClass('star')) {
-    $target = $target.children()
-  } 
+  if ($target.hasClass("star")) {
+    $target = $target.children();
+  }
 
   if ($target.hasClass("fas")) {
     await currentUser.removeStoryFromFavorites(story);
-    $target.closest('i').toggleClass('fas far');
+    $target.closest("i").toggleClass("fas far");
   } else {
     await currentUser.addStoryToFavorites(story);
-    $target.closest('i').toggleClass('fas far');
+    $target.closest("i").toggleClass("fas far");
   }
 }
 
-$storyLists.on('click', '.star', toggleFavorite);
+$storyLists.on("click", ".star", toggleFavorite);

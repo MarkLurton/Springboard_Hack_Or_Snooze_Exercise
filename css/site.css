@@ -21,6 +21,10 @@ h5 {
   font-weight: lighter;
 }
 
+h3 {
+  margin-block-start: 0;
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -39,6 +43,11 @@ a:hover {
   align-self: center;
   background-color: #f6f6ef;
   align-items: left;
+}
+.account-info-container {
+  padding-block-start: 10px;
+  padding-inline-start: 20px;
+  padding-block-end: 5px;
 }
 
 .hidden {
@@ -82,7 +91,7 @@ form input:focus {
   box-shadow: 0 0 4px 1px darkgray;
 }
 
-form > button {
+form > div > button {
   width: 4rem;
   margin: 5px 0 15px 65px;
   border: none;
@@ -95,8 +104,20 @@ form > button {
   transition: all 0.15s;
 }
 
-form > button:hover {
+form > div > button:hover {
   background-color: dimgray;
+}
+
+form > div > .cancel {
+  background-color: white;
+  color: lightslategray;
+  border: 1px solid lightslategray;
+}
+
+form > div > .cancel:hover {
+  background-color: rgb(183, 183, 183);
+  color: lightslategray;
+  border: 1px solid lightslategray;
 }
 
 form > hr {

@@ -10,7 +10,7 @@ let currentUser;
 /** Handle login form submission. If login ok, sets up the user instance */
 
 async function login(evt) {
-  console.debug("login", evt);
+  console.debug("login");
   evt.preventDefault();
 
   // grab the username and password
@@ -26,9 +26,20 @@ async function login(evt) {
 
     saveUserCredentialsInLocalStorage();
     updateUIOnUserLogin();
-  } catch(err) {
-    alert('Incorrect login credentials. Please double check your username and password.')
+  } catch (err) {
+    alert(
+      "Incorrect login credentials. Please double check your username and password."
+    );
   }
+}
+
+function createUserInfoPage() {
+  $accountInfoContainer.html(`
+    <h3>User Profile Info</h3>
+    <h5>Name: ${currentUser.name}</h5>
+    <h5>Username: ${currentUser.username}</h5>
+    <h5>Account Created: ${currentUser.createdAt}</h5>
+  `);
 }
 
 $loginForm.on("submit", login);
@@ -116,6 +127,6 @@ async function updateUIOnUserLogin() {
   hidePageComponents();
   await getAndShowStoriesOnStart();
 
+  createUserInfoPage();
   updateNavOnLogin();
 }
-
