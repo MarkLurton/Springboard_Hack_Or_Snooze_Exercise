@@ -79,6 +79,37 @@
         <button type="submit">submit story</button>
         <hr />
       </form>
+
+      <form
+        action="#"
+        id="edit-form"
+        class="edit-form hidden container"
+        method="patch"
+      >
+        <h4>Edit Story</h4>
+        <div class="edit-input">
+          <label for="edit-author">author</label>
+          <input
+            class="edit-inputs"
+            id="edit-author"
+            placeholder="author name"
+          />
+        </div>
+        <div class="edit-input">
+          <label for="edit-title">title</label>
+          <input class="edit-inputs" id="edit-title" placeholder="title" />
+        </div>
+        <div class="edit-input">
+          <label for="edit-url">url</label>
+          <input
+            class="edit-inputs"
+            id="edit-url"
+            placeholder="story url"
+          />
+        </div>
+        <button type="submit">edit story</button>
+        <hr />
+      </form>
       <!-- loading message (removed by JS after stories loaded) -->
       <div id="stories-loading-msg">Loading&hellip;</div>
 

@@ -19,7 +19,7 @@ async function getAndShowStoriesOnStart() {
  * Returns the markup for the story.
  */
 
-function generateStoryMarkup(story, showTrashCan = false) {
+function generateStoryMarkup(story, showTrashCan = false, showPencil = false) {
   // console.debug("generateStoryMarkup", story);
 
   const hostName = story.getHostName();
@@ -28,6 +28,7 @@ function generateStoryMarkup(story, showTrashCan = false) {
   return $(`
       <li id="${story.storyId}">
         ${showTrashCan ? getTrashCan() : ""}
+        ${showPencil ? getPencil() : ""}
         ${showFav ? getStarIcon(story, currentUser) : ""}
         <a href="${story.url}" target="a_blank" class="story-link">
           ${story.title}
@@ -52,6 +53,13 @@ function getTrashCan() {
   return `
       <span class="trash-can">
         <i class="fas fa-trash-alt"></i>
+      </span>`;
+}
+
+function getPencil() {
+  return `
+      <span class="pencil">
+        <i class="fas fa-pencil-alt"></i>
       </span>`;
 }
 
@@ -98,7 +106,7 @@ function putOwnStoriesOnPage() {
     $ownStories.append("<h4>No stories posted yet!</h4>");
   } else {
     for (let story of currentUser.ownStories) {
-      const $story = generateStoryMarkup(story, true);
+      const $story = generateStoryMarkup(story, true, true);
       $ownStories.append($story);
     }
   }
@@ -109,6 +117,43 @@ function putOwnStoriesOnPage() {
 $ownStories.on('click', '.trash-can', function() {
   currentUser.deleteStory(event);
 });
+
+$ownStories.on('click', '.pencil', function(event) {
+  let $target = $(event.target);
+  const $closestLi = $target.closest('li');
+  const storyId = $closestLi.attr('id');
+  let story = storyList.stories.find(str => str.storyId === storyId);
+
+  $('#edit-title').val(`${story.title}`);
+  $('#edit-author').val(`${story.author}`);
+  $('#edit-url').val(`${story.url}`);
+  $editForm.show();
+  storyList.editStoryId = storyId;
+})
+
+$editForm.on('submit', async function(event) {
+  event.preventDefault();
+  
+  let editStory = {
+    title: $("#edit-title").val(),
+    author: $("#edit-author").val(),
+    url: $("#edit-url").val(),
+    storyId: storyList.editStoryId
+  };
+  currentUser.ownStories = currentUser.ownStories.filter(str => str.storyId !== editStory.storyId);
+  editStory = new Story(await storyList.editStory(currentUser, editStory));
+  currentUser.ownStories.push(editStory);
+
+  const currFavLength = currentUser.favorites.length;
+  currentUser.favorites = currentUser.favorites.filter(str => str.storyId !== editStory.storyId);
+  if (currentUser.favorites.length !== currFavLength) {
+    currentUser.favorites.unshift(editStory);
+  }
+  $(".edit-inputs").val("");
+  hidePageComponents();
+
+  putOwnStoriesOnPage();
+})
 
 function putFavoritesOnPage() {
   console.debug('putFavoritesOnPage');

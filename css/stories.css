@@ -41,7 +41,7 @@
 /* story icons */
 
 
-.star, .trash-can {
+.star, .trash-can , .pencil{
   font-size: 0.75rem;
   margin: 0 2px;
   cursor: pointer;
@@ -53,4 +53,8 @@
 
 .star:hover {
   color: gold;
+}
+
+.pencil:hover {
+  color: green;
 }

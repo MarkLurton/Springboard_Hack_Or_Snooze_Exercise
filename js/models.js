@@ -84,6 +84,42 @@ class StoryList {
     StoryList.getStories();
     return story;
   }
+
+  async editStory(user, editStory) {
+    console.debug('editStory');
+
+    const editStoryBodyT = {
+      "token" : user.loginToken,
+      "story" : {
+        "title" : editStory.title
+      }
+    }
+
+    const editStoryBodyA = {
+      "token" : user.loginToken,
+      "story" : {
+        "author" : editStory.author
+      }
+    }
+
+    const editStoryBodyU = {
+      "token" : user.loginToken,
+      "story" : {
+        "url" : editStory.url
+      }
+    }
+
+    const res1 = await axios.patch(`${BASE_URL}/stories/${editStory.storyId}`, editStoryBodyA);
+    const res2 = await axios.patch(`${BASE_URL}/stories/${editStory.storyId}`, editStoryBodyU);
+    const res3 = await axios.patch(`${BASE_URL}/stories/${editStory.storyId}`, editStoryBodyT);
+
+    const story = new Story(res3.data.story);
+
+    this.stories = this.stories.filter(str => str.storyId !== editStory.storyId);
+    this.stories.unshift(story);
+    StoryList.getStories();
+    return story;
+  }
 }
 
 /******************************************************************************
