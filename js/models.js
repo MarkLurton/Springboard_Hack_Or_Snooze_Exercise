@@ -153,6 +153,38 @@ class StoryList {
       return null;
     }
   }
+
+  async deleteStory(event) {
+    console.debug("deleteStory");
+    let $target = $(event.target);
+    const $closestLi = $target.closest("li");
+    const storyId = $closestLi.attr("id");
+
+    if ($target.hasClass("trash-can")) {
+      $target = $target.children();
+    }
+
+    await axios.delete(
+      `https://hack-or-snooze-v3.herokuapp.com/stories/${storyId}`,
+      {
+        data: {
+          token: currentUser.loginToken,
+        },
+      }
+    );
+
+    currentUser.favorites = currentUser.favorites.filter(
+      (favStory) => favStory.storyId !== storyId
+    );
+
+    currentUser.ownStories = currentUser.ownStories.filter(
+      (story) => story.storyId !== storyId
+    );
+    storyList.stories = storyList.stories.filter(
+      (str) => str.storyId !== storyId
+    );
+    putOwnStoriesOnPage();
+  }
 }
 
 /******************************************************************************
@@ -275,38 +307,6 @@ class User {
       console.error("loginViaStoredCredentials failed", err);
       return null;
     }
-  }
-
-  async deleteStory(event) {
-    console.debug("deleteStory");
-    let $target = $(event.target);
-    const $closestLi = $target.closest("li");
-    const storyId = $closestLi.attr("id");
-
-    if ($target.hasClass("trash-can")) {
-      $target = $target.children();
-    }
-
-    await axios.delete(
-      `https://hack-or-snooze-v3.herokuapp.com/stories/${storyId}`,
-      {
-        data: {
-          token: this.loginToken,
-        },
-      }
-    );
-
-    this.favorites = this.favorites.filter(
-      (favStory) => favStory.storyId !== storyId
-    );
-
-    this.ownStories = this.ownStories.filter(
-      (story) => story.storyId !== storyId
-    );
-    storyList.stories = storyList.stories.filter(
-      (str) => str.storyId !== storyId
-    );
-    putOwnStoriesOnPage();
   }
 
   addStoryToFavorites(story) {

@@ -124,8 +124,8 @@ function putOwnStoriesOnPage() {
   $ownStories.show();
 }
 
-$ownStories.on("click", ".trash-can", function (event) {
-  currentUser.deleteStory(event);
+$ownStories.on("click", ".trash-can", async function (event) {
+  storyList.deleteStory(event);
 });
 
 $ownStories.on("click", ".pencil", function (event) {
