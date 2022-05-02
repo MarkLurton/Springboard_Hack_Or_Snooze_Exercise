@@ -99,38 +99,18 @@ class StoryList {
   async editStory(user, editStory) {
     console.debug("editStory");
     try {
-      const editStoryBodyT = {
+      const editStoryBody = {
         token: user.loginToken,
         story: {
+          url: editStory.url,
           title: editStory.title,
-        },
-      };
-
-      const editStoryBodyA = {
-        token: user.loginToken,
-        story: {
           author: editStory.author,
         },
       };
 
-      const editStoryBodyU = {
-        token: user.loginToken,
-        story: {
-          url: editStory.url,
-        },
-      };
-
-      await axios.patch(
-        `${BASE_URL}/stories/${editStory.storyId}`,
-        editStoryBodyA
-      );
-      await axios.patch(
-        `${BASE_URL}/stories/${editStory.storyId}`,
-        editStoryBodyU
-      );
       const res = await axios.patch(
         `${BASE_URL}/stories/${editStory.storyId}`,
-        editStoryBodyT
+        editStoryBody
       );
 
       const story = new Story(res.data.story);
@@ -164,14 +144,11 @@ class StoryList {
       $target = $target.children();
     }
 
-    await axios.delete(
-      `https://hack-or-snooze-v3.herokuapp.com/stories/${storyId}`,
-      {
-        data: {
-          token: currentUser.loginToken,
-        },
-      }
-    );
+    await axios.delete(`${BASE_URL}/stories/${storyId}`, {
+      data: {
+        token: currentUser.loginToken,
+      },
+    });
 
     currentUser.favorites = currentUser.favorites.filter(
       (favStory) => favStory.storyId !== storyId
@@ -312,7 +289,7 @@ class User {
   addStoryToFavorites(story) {
     this.favorites.push(story);
     axios.post(
-      `https://hack-or-snooze-v3.herokuapp.com/users/${this.username}/favorites/${story.storyId}`,
+      `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
       { token: this.loginToken }
     );
   }
@@ -322,7 +299,7 @@ class User {
       (favStory) => favStory.storyId !== story.storyId
     );
     axios.delete(
-      `https://hack-or-snooze-v3.herokuapp.com/users/${this.username}/favorites/${story.storyId}`,
+      `${BASE_URL}/users/${this.username}/favorites/${story.storyId}`,
       { data: { token: this.loginToken } }
     );
   }
